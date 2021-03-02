@@ -1,0 +1,12 @@
+{
+  "name": "HappyUI",
+  "displayName": "HappyUI",
+  "expo": {
+    "name": "HappyUI",
+    "slug": "HappyUI",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}

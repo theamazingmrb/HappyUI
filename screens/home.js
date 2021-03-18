@@ -17,7 +17,7 @@ import { getCurrentUser } from "../services/auth.service";
 import Ticket from "../components/ticket";
 const logo = require("../assets/HappyTenants-01.jpg");
 
-export default function Home({ navigation }) {
+export default function Home({ navigation, route }) {
   const [message, setMessage] = useState("No message");
   const [isManager, setIsManager] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
@@ -66,6 +66,8 @@ export default function Home({ navigation }) {
     },
   ]);
 
+  const buildings = route.params;
+  console.log("buildings here ---->", buildings);
   const renderItem = (item) => <Ticket ticket={item} navigation={navigation} />;
 
   const getUser = async () => {
@@ -89,7 +91,12 @@ export default function Home({ navigation }) {
       <Text style={styles.title}>Welcome {currentUser.username}</Text>
       {/* <Text style={styles.title}>IsManager {isManager.toString()}</Text> */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.createTicket}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("NewTicket", { buildings, navigation })
+          }
+          style={styles.createTicket}
+        >
           <Text style={styles.toggleText}>Create New Ticket</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.createAlert}>

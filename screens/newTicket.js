@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,40 +12,52 @@ import {
 import DropDownPicker from "react-native-dropdown-picker";
 import axios from "axios";
 import { useForm } from "react-hook-form";
+import AppContext from "../components/AppContext";
+import { newTicket } from "../services/ticket.service";
+import { Camera } from "expo-camera";
 
-export default function NewTicket({ navigation, route }) {
-  const STORAGE_KEY = "@user";
-  const [buildings, setBuildings] = useState(route.params.buildings);
-
-  const [selectedBuilding, setSelectedBuilding] = useState(buildings[0].name);
+export default function NewTicket({ navigation }) {
+  const globalState = useContext(AppContext);
+  const buildings = [
+    { name: "Please Select A Value", _id: null },
+    ...globalState.buildings,
+  ];
+  const [selectedBuilding, setSelectedBuilding] = useState(buildings[0]);
   const { register, handleSubmit, setValue } = useForm();
-  // used for getting building data
-  // useEffect(() => {
-  //   axios
-  //     .get("https://happy-tenants-dev.herokuapp.com/api/buildings")
-  //     .then((res) => {
-  //       const data = res.data.buildings;
-  //       setBuildings(data);
-  //       setSelectedBuilding(data[0].name);
-  //     })
-  //     .catch(function (error) {
-  //       alert(error);
-  //     });
-  // }, []);
   // set up for form w/ useForm values
   useEffect(() => {
-    register("username");
-    register("password");
     register("building");
+    register("description");
+    register("tenantContact");
+    register("tenantNotes");
+    register("unit");
+    register("start");
+    register("end");
   }, [register]);
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [hasPermission, setHasPermission] = useState(null);
 
-  const loginToggle = () => {
-    setToggleLogin(!toggleLogin);
-  };
-  console.log("the route route ", route);
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
   const onSubmit = async (data) => {
+    console.log("from submit", data);
     // let res = await login(data.username, data.password);
-    console.log(data);
+    newTicket(
+      data.building,
+      data.description,
+      data.tenantContact,
+      data.tenantNotes,
+      data.start,
+      data.end,
+      data.unit
+    ).then((res) => {
+      console.log(res);
+    });
     //    if (res) {
     //       setMessage(`Welcome ${res.username}`)
 
@@ -55,6 +67,12 @@ export default function NewTicket({ navigation, route }) {
 
     //     }
   };
+  if (hasPermission === null) {
+    return <View />;
+  }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
@@ -65,7 +83,7 @@ export default function NewTicket({ navigation, route }) {
           items={buildings.map((building) => {
             return { label: building.name, value: building.name };
           })}
-          defaultValue={selectedBuilding}
+          defaultValue={selectedBuilding.name}
           containerStyle={{ height: 40 }}
           style={{ backgroundColor: "#fafafa" }}
           itemStyle={{
@@ -73,36 +91,54 @@ export default function NewTicket({ navigation, route }) {
           }}
           dropDownStyle={{ backgroundColor: "#fafafa" }}
           onChangeItem={(item) => {
-            setSelectedBuilding(item);
-            setValue("building", item);
+            setSelectedBuilding(
+              buildings.filter((building) => building.name == item.value)[0]
+            );
+            console.log("building here", selectedBuilding);
+            setValue("building", selectedBuilding._id);
           }}
         />
         <TextInput
+          label="Unit"
           placeholder="Unit"
+          style={styles.inputStyle}
           onChangeText={(text) => {
             setValue("unit", text);
           }}
         />
         <TextInput
+          label="Contact"
+          Type="outlined"
           placeholder="Contact"
+          style={styles.inputStyle}
           onChangeText={(text) => {
-            setValue("contact", text);
+            setValue("tenantContact", text);
           }}
         />
         <TextInput
-          placeholder="details"
+          placeholder="description"
+          style={styles.inputStyle}
           onChangeText={(text) => {
-            setValue("details", text);
+            setValue("description", text);
+          }}
+        />
+        <TextInput
+          placeholder="Notes"
+          style={styles.inputStyle}
+          onChangeText={(text) => {
+            setValue("tenantNotes", text);
           }}
         />
         <TextInput
           placeholder="Maintenance Availablility Start"
+          style={styles.inputStyle}
           onChangeText={(text) => {
             setValue("start", text);
           }}
         />
         <TextInput
           placeholder="Maintenance Availablility End"
+          style={styles.inputStyle}
           onChangeText={(text) => {
             setValue("end", text);
           }}
@@ -114,6 +150,22 @@ export default function NewTicket({ navigation, route }) {
         style={styles.button}
         onPress={handleSubmit(onSubmit)}
       />
+      <Camera type={type}>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              setType(
+                type === Camera.Constants.Type.back
+                  ? Camera.Constants.Type.front
+                  : Camera.Constants.Type.back
+              );
+            }}
+          >
+            <Text style={styles.text}> Flip </Text>
+          </TouchableOpacity>
+        </View>
+      </Camera>
     </View>
   );
 }
@@ -163,5 +215,10 @@ const styles = StyleSheet.create({
   toggleText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  inputStyle: {
+    backgroundColor: "#ececec",
+    padding: 10,
+    margin: 10,
   },
 });

@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import React, { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,35 +11,26 @@ import {
   TouchableOpacity,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import axios from "axios";
-import { useForm } from "react-hook-form";
 import { login } from "../services/auth.service";
 const logo = require("../assets/HappyTenants-01.jpg");
+import AppContext from "../components/AppContext";
+import { getAllBuildings } from "../services/building.service";
 
 export default function LandingScreen({ navigation }) {
-  const [message, setMessage] = useState("No message");
-  const [buildings, setBuildings] = useState([
-    { name: "No buildings available", units: ["n/a"] },
-  ]);
-  const STORAGE_KEY = "@user";
   const [toggleLogin, setToggleLogin] = useState(false);
+  const [message, setMessage] = useState(null);
   const [selectedBuilding, setSelectedBuilding] = useState(
     "No buildings available"
   );
   const { register, handleSubmit, setValue } = useForm();
+  const globalState = useContext(AppContext);
+
   // used for getting building data
   useEffect(() => {
-    axios
-      .get("https://happy-tenants-dev.herokuapp.com/api/buildings")
-      .then((res) => {
-        const data = res.data.buildings;
-        setBuildings(data);
-        setSelectedBuilding(data[0].name);
-        console.log("data", data);
-      })
-      .catch(function (error) {
-        alert(error);
-      });
+    getAllBuildings().then((buildings) => {
+      globalState.setBuildings(buildings);
+      setSelectedBuilding(buildings[0].name);
+    });
   }, []);
   // set up for form w/ useForm values
   useEffect(() => {
@@ -58,7 +50,7 @@ export default function LandingScreen({ navigation }) {
       setMessage(`Welcome ${res.username}`);
 
       setTimeout(function () {
-        navigation.navigate("Home", buildings);
+        navigation.navigate("Home");
       }, 3000);
     }
   };
@@ -90,6 +82,12 @@ export default function LandingScreen({ navigation }) {
             setValue("password", text);
           }}
         />
+        <Button
+          title="SUBMIT"
+          color="black"
+          style={styles.button}
+          onPress={handleSubmit(onSubmit)}
+        />
       </View>
       <View style={toggleLogin ? styles.toggleBox : styles.hide}>
         <Text>Please Sign up</Text>
@@ -113,7 +111,7 @@ export default function LandingScreen({ navigation }) {
         />
         <TextInput placeholder="Address" />
         <DropDownPicker
-          items={buildings.map((building) => {
+          items={globalState.buildings.map((building) => {
             return { label: building.name, value: building.name };
           })}
           defaultValue={selectedBuilding}
@@ -124,17 +122,18 @@ export default function LandingScreen({ navigation }) {
           }}
           dropDownStyle={{ backgroundColor: "#fafafa" }}
           onChangeItem={(item) => {
-            setSelectedBuilding(item);
+            setSelectedBuilding(item.name);
             setValue("building", item);
           }}
         />
+        <Button
+          title="SUBMIT"
+          color="black"
+          style={styles.button}
+          onPress={handleSubmit(onSubmit)}
+        />
       </View>
-      <Button
-        title="SUBMIT"
-        color="black"
-        style={styles.button}
-        onPress={handleSubmit(onSubmit)}
-      />
+
       <Text>{message}</Text>
     </View>
   );

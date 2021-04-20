@@ -12,7 +12,7 @@ import {
 export default function About() {
   return (
     <View style={styles.container}>
-      <Text>About</Text>
+      <Text>Happy Tenants ©2021 </Text>
     </View>
   );
 }

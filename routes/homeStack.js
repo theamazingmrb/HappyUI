@@ -5,6 +5,7 @@ import Tickets from "../screens/Tickets";
 import TicketDetail from "../screens/TicketDetail";
 import LandingScreen from "../screens/landingScreen";
 import NewTicket from "../screens/newTicket";
+import NewAlert from "../screens/newAlert";
 
 const Stack = createStackNavigator();
 
@@ -30,6 +31,13 @@ const HomeStack = () => {
         options={{
           gestureEnabled: false,
           headerLeft: "",
+        }}
+      />
+      <Stack.Screen
+        name="NewAlert"
+        component={NewAlert}
+        options={{
+          gestureEnabled: false,
         }}
       />
       <Stack.Screen

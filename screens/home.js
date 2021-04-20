@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -15,6 +15,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import axios from "axios";
 import { getCurrentUser } from "../services/auth.service";
 import Ticket from "../components/ticket";
+import { getAllTickets } from "../services/ticket.service";
 const logo = require("../assets/HappyTenants-01.jpg");
 
 export default function Home({ navigation, route }) {
@@ -66,14 +67,19 @@ export default function Home({ navigation, route }) {
     },
   ]);
 
-  const buildings = route.params;
-  console.log("buildings here ---->", buildings);
   const renderItem = (item) => <Ticket ticket={item} navigation={navigation} />;
 
   const getUser = async () => {
     let res = await getCurrentUser();
     let user = JSON.parse(res);
     return user;
+  };
+
+  const gatherTickets = async () => {
+    let res = await getAllTickets;
+    let tickets = JSON.parse(res);
+    console.log("Tickets from tickets response", tickets);
+    return tickets;
   };
   // used for getting building data
   useEffect(() => {
@@ -83,23 +89,26 @@ export default function Home({ navigation, route }) {
         setIsManager(true);
       }
     });
+    getAllTickets().then((tickets) => {
+      console.log(tickets);
+    });
   }, []);
 
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
       <Text style={styles.title}>Welcome {currentUser.username}</Text>
-      {/* <Text style={styles.title}>IsManager {isManager.toString()}</Text> */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("NewTicket", { buildings, navigation })
-          }
+          onPress={() => navigation.navigate("NewTicket")}
           style={styles.createTicket}
         >
           <Text style={styles.toggleText}>Create New Ticket</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.createAlert}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("NewAlert")}
+          style={styles.createAlert}
+        >
           <Text style={styles.toggleText}>Create New Alert</Text>
         </TouchableOpacity>
       </View>

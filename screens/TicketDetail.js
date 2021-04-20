@@ -54,17 +54,34 @@ export default function TicketDetail({
             : "\nNo window set."}
         </Text>
       </View>
+      <View style={styles.buttonContainer}>
+        <View>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("EditTicket")}
+            style={styles.editTicket}
+          >
+            <Text style={styles.toggleText}>Edit</Text>
+          </TouchableOpacity>
+        </View>
+        <View>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("DeleteTicket")}
+            style={styles.deleteTicket}
+          >
+            <Text style={styles.toggleText}>Delete</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    flexDirection: "row",
+    flex: 1,
+    flexDirection: "column",
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "space-between",
     paddingTop: 30,
     width: Dimensions.get("window").width - 10,
   },
@@ -81,11 +98,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    marginTop: 30,
+    alignContent: "space-around",
   },
   button: {
-    padding: 5,
     backgroundColor: "#516391",
     color: "white",
     letterSpacing: 0,
@@ -100,11 +116,11 @@ const styles = StyleSheet.create({
     height: "50%",
     width: "100%",
   },
-  toggleLogin: {
+  editTicket: {
     padding: 20,
     backgroundColor: "#3EA9F5",
   },
-  toggleSignUp: {
+  deleteTicket: {
     backgroundColor: "#1C5178",
     padding: 20,
   },

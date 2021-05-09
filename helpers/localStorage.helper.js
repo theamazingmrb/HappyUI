@@ -15,6 +15,7 @@ export const retrieveData = async (key) => {
 
 // Set items from local Storage
 export const storeData = async (key, data) => {
+  console.log("storing", data);
   try {
     await AsyncStorage.setItem(key, JSON.stringify(data));
   } catch (error) {

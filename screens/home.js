@@ -70,9 +70,7 @@ export default function Home({ navigation, route }) {
   const renderItem = (item) => <Ticket ticket={item} navigation={navigation} />;
 
   const getUser = async () => {
-    let res = await getCurrentUser();
-    let user = JSON.parse(res);
-    return user;
+    return await getCurrentUser();
   };
 
   const gatherTickets = async () => {

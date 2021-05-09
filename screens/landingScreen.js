@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { login } from "../services/auth.service";
+import { login, signup } from "../services/auth.service";
 const logo = require("../assets/HappyTenants-01.jpg");
 import AppContext from "../components/AppContext";
 import { getAllBuildings } from "../services/building.service";
@@ -37,6 +37,7 @@ export default function LandingScreen({ navigation }) {
     register("username");
     register("password");
     register("building");
+    register("email");
   }, [register]);
 
   const loginToggle = () => {
@@ -47,6 +48,26 @@ export default function LandingScreen({ navigation }) {
     let res = await login(data.username, data.password);
 
     if (res) {
+      setMessage(`Welcome ${res.username}`);
+
+      setTimeout(function () {
+        navigation.navigate("Home");
+      }, 3000);
+    }
+  };
+
+  const onSignUpSubmit = async (data) => {
+    let thisBuilding = globalState.buildings.filter(
+      (building) => building.name == data.building
+    );
+    let res = await signup(
+      data.username,
+      data.email,
+      data.password,
+      thisBuilding[0]._id
+    );
+    console.log(res);
+    if (res.status == "ok") {
       setMessage(`Welcome ${res.username}`);
 
       setTimeout(function () {
@@ -122,15 +143,16 @@ export default function LandingScreen({ navigation }) {
           }}
           dropDownStyle={{ backgroundColor: "#fafafa" }}
           onChangeItem={(item) => {
-            setSelectedBuilding(item.name);
-            setValue("building", item);
+            console.log(item);
+            setSelectedBuilding(item.value);
+            setValue("building", item.value);
           }}
         />
         <Button
           title="SUBMIT"
           color="black"
           style={styles.button}
-          onPress={handleSubmit(onSubmit)}
+          onPress={handleSubmit(onSignUpSubmit)}
         />
       </View>
 

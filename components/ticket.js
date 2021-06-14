@@ -25,6 +25,7 @@ export default function Ticket({
       tenantNotes,
       tenantContact,
       unit,
+      _id,
     },
   },
   navigation,
@@ -43,11 +44,13 @@ export default function Ticket({
           tenantNotes,
           tenantContact,
           unit,
+          _id,
         })
       }
+      key={_id}
       style={styles.container}
     >
-      <View>
+      <View key={_id}>
         <Text style={styles.title}>Building: {building}</Text>
         <Text style={styles.title}>Description: {description}</Text>
       </View>

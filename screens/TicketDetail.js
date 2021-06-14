@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
+import { deleteTicket } from "../services/ticket.service";
+import { Alert } from "react-native";
 
 import {
   StyleSheet,
@@ -24,6 +26,7 @@ export default function TicketDetail({
       tenantContact,
       tenantNotes,
       unit,
+      _id,
     },
   },
   navigation,
@@ -57,7 +60,20 @@ export default function TicketDetail({
       <View style={styles.buttonContainer}>
         <View>
           <TouchableOpacity
-            onPress={() => navigation.navigate("EditTicket")}
+            onPress={() =>
+              navigation.navigate("EditTicket", {
+                building,
+                createdBy,
+                description,
+                maintenance,
+                maintenanceWindow,
+                status,
+                tenantNotes,
+                tenantContact,
+                unit,
+                _id,
+              })
+            }
             style={styles.editTicket}
           >
             <Text style={styles.toggleText}>Edit</Text>
@@ -65,7 +81,14 @@ export default function TicketDetail({
         </View>
         <View>
           <TouchableOpacity
-            onPress={() => navigation.navigate("DeleteTicket")}
+            onPress={() =>
+              deleteTicket(_id).then((res) => {
+                if (res.status == 200) {
+                  Alert.alert("Ticket Deleted");
+                  navigation.navigate("Home");
+                }
+              })
+            }
             style={styles.deleteTicket}
           >
             <Text style={styles.toggleText}>Delete</Text>

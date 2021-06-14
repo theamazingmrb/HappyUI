@@ -12,7 +12,7 @@ const STORAGE_KEY = "@user";
 
 export const getAllTickets = async () => {
   let res = await axios.get(`${API_URL}all`);
-  return res.data.tickets;
+  return res.data.tickets ? res.data.tickets : null;
 };
 
 export const newTicket = async (
@@ -41,42 +41,39 @@ export const newTicket = async (
   );
 };
 
-export const snewTicket = async (
+export const updateTicket = async (
+  ticket,
   building,
   description,
   tenantContact,
   tenantNotes,
   start,
   end,
-  unit
+  unit,
+  status
 ) => {
-  console.log(
-    "Service Items",
-    building,
-    description,
-    tenantContact,
-    tenantNotes,
-    start,
-    end,
-    unit
+  let accessToken = await authHeader();
+  return axios.put(
+    API_URL,
+    {
+      ticket: ticket,
+      building: building,
+      tenantContact: tenantContact,
+      tenantNotes: tenantNotes,
+      description: description,
+      unit: unit,
+      start: start,
+      end: end,
+      status: status,
+    },
+    { headers: accessToken }
   );
-  console.log(typeof building);
-  authHeader().then((resHeader) => {
-    console.log(resHeader);
-  });
-  axios
-    .post(
-      API_URL,
-      {
-        building: building,
-        tenantContact: tenantContact,
-        tenantNotes: tenantNotes,
-        description: description,
-        unit: unit,
-        start: start,
-        end: end,
-      },
-      { headers: authHeader() }
-    )
-    .then((res) => res.data);
+};
+
+export const deleteTicket = async (id) => {
+  let accessToken = await authHeader();
+  if (accessToken) {
+    console.log("acess token here : ", accessToken);
+    return axios.delete(`${API_URL}${id}`, { headers: accessToken });
+  }
 };

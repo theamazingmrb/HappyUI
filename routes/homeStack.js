@@ -1,11 +1,11 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "../screens/home";
-import Tickets from "../screens/Tickets";
 import TicketDetail from "../screens/TicketDetail";
 import LandingScreen from "../screens/landingScreen";
 import NewTicket from "../screens/newTicket";
 import NewAlert from "../screens/newAlert";
+import EditTicket from "../screens/editTicket";
 
 const Stack = createStackNavigator();
 
@@ -40,11 +40,11 @@ const HomeStack = () => {
           gestureEnabled: false,
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Tickets"
         component={Tickets}
         options={{ gestureEnabled: false }}
-      />
+      /> */}
       <Stack.Screen
         name="TicketDetail"
         component={TicketDetail}
@@ -53,6 +53,11 @@ const HomeStack = () => {
       <Stack.Screen
         name="NewTicket"
         component={NewTicket}
+        options={{ gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="EditTicket"
+        component={EditTicket}
         options={{ gestureEnabled: false }}
       />
     </Stack.Navigator>

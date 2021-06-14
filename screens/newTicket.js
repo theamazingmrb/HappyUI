@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -43,10 +43,7 @@ export default function NewTicket({ navigation }) {
       setHasPermission(status === "granted");
     })();
   }, []);
-
-  const onSubmit = async (data) => {
-    console.log("from submit", data);
-    // let res = await login(data.username, data.password);
+  const onSubmit = (data) => {
     newTicket(
       data.building,
       data.description,
@@ -57,15 +54,12 @@ export default function NewTicket({ navigation }) {
       data.unit
     ).then((res) => {
       console.log(res);
+      if (res) {
+        setTimeout(function () {
+          navigation.navigate("Home");
+        }, 3000);
+      }
     });
-    //    if (res) {
-    //       setMessage(`Welcome ${res.username}`)
-
-    //       setTimeout(function () {
-    //            navigation.navigate('Home')
-    //     }, 3000);
-
-    //     }
   };
   if (hasPermission === null) {
     return <View />;
@@ -91,11 +85,12 @@ export default function NewTicket({ navigation }) {
           }}
           dropDownStyle={{ backgroundColor: "#fafafa" }}
           onChangeItem={(item) => {
-            setSelectedBuilding(
-              buildings.filter((building) => building.name == item.value)[0]
-            );
-            console.log("building here", selectedBuilding);
-            setValue("building", selectedBuilding._id);
+            let b = buildings.filter(
+              (building) => building.name == item.value
+            )[0];
+
+            setSelectedBuilding(b);
+            setValue("building", b._id);
           }}
         />
         <TextInput
@@ -150,22 +145,12 @@ export default function NewTicket({ navigation }) {
         style={styles.button}
         onPress={handleSubmit(onSubmit)}
       />
-      <Camera type={type}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              setType(
-                type === Camera.Constants.Type.back
-                  ? Camera.Constants.Type.front
-                  : Camera.Constants.Type.back
-              );
-            }}
-          >
-            <Text style={styles.text}> Flip </Text>
-          </TouchableOpacity>
-        </View>
-      </Camera>
+      {/* <Camera
+        style={{ flex: 1, width: "100%" }}
+        ref={(r) => {
+          camera = r;
+        }}
+      ></Camera> */}
     </View>
   );
 }
@@ -219,6 +204,7 @@ const styles = StyleSheet.create({
   inputStyle: {
     backgroundColor: "#ececec",
     padding: 10,
+    width: 300,
     margin: 10,
   },
 });

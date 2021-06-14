@@ -5,6 +5,7 @@
     "name": "HappyUI",
     "slug": "HappyUI",
     "version": "1.0.0",
+    "owner": "heidelbergdev",
     "assetBundlePatterns": [
       "**/*"
     ]

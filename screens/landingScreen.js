@@ -9,6 +9,7 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { login, signup } from "../services/auth.service";
@@ -25,20 +26,23 @@ export default function LandingScreen({ navigation }) {
   const { register, handleSubmit, setValue } = useForm();
   const globalState = useContext(AppContext);
 
-  // used for getting building data
-  useEffect(() => {
-    getAllBuildings().then((buildings) => {
-      globalState.setBuildings(buildings);
-      setSelectedBuilding(buildings[0].name);
-    });
-  }, []);
   // set up for form w/ useForm values
   useEffect(() => {
     register("username");
     register("password");
     register("building");
     register("email");
+    register("role");
   }, [register]);
+
+  // used for getting building data
+  useEffect(() => {
+    getAllBuildings().then((buildings) => {
+      globalState.setBuildings(buildings);
+      setSelectedBuilding(buildings[0].name);
+      setValue("building", buildings[0].name);
+    });
+  }, []);
 
   const loginToggle = () => {
     setToggleLogin(!toggleLogin);
@@ -46,13 +50,24 @@ export default function LandingScreen({ navigation }) {
 
   const onSubmit = async (data) => {
     let res = await login(data.username, data.password);
-
-    if (res) {
+    console.log(res);
+    if (res.status != 401) {
       setMessage(`Welcome ${res.username}`);
 
       setTimeout(function () {
         navigation.navigate("Home");
       }, 3000);
+    } else {
+      Alert.alert("Username/Password incorrect. Please try again");
+    }
+  };
+
+  const managerLogin = async () => {
+    let res = await login("manager2", "          ");
+    if (res.accessToken) {
+      navigation.navigate("Home");
+    } else {
+      Alert.alert("Failed to login with manager2");
     }
   };
 
@@ -64,7 +79,8 @@ export default function LandingScreen({ navigation }) {
       data.username,
       data.email,
       data.password,
-      thisBuilding[0]._id
+      thisBuilding[0]._id,
+      data.role
     );
     console.log(res);
     if (res.status == "ok") {
@@ -109,6 +125,14 @@ export default function LandingScreen({ navigation }) {
           style={styles.button}
           onPress={handleSubmit(onSubmit)}
         />
+        <Button
+          title="Test User login"
+          color="black"
+          style={styles.button}
+          onPress={() => {
+            managerLogin();
+          }}
+        />
       </View>
       <View style={toggleLogin ? styles.toggleBox : styles.hide}>
         <Text>Please Sign up</Text>
@@ -136,7 +160,7 @@ export default function LandingScreen({ navigation }) {
             return { label: building.name, value: building.name };
           })}
           defaultValue={selectedBuilding}
-          containerStyle={{ height: 40 }}
+          containerStyle={{ height: 40, zIndex: 20000 }}
           style={{ backgroundColor: "#fafafa" }}
           itemStyle={{
             justifyContent: "flex-start",
@@ -146,6 +170,23 @@ export default function LandingScreen({ navigation }) {
             console.log(item);
             setSelectedBuilding(item.value);
             setValue("building", item.value);
+          }}
+        />
+
+        <DropDownPicker
+          items={["manager", "tenant", "maintenance"].map((role) => {
+            return { label: role, value: role };
+          })}
+          defaultValue={"tenant"}
+          containerStyle={{ height: 40 }}
+          style={{ backgroundColor: "#fafafa" }}
+          itemStyle={{
+            justifyContent: "flex-start",
+          }}
+          dropDownStyle={{ backgroundColor: "#fafafa" }}
+          onChangeItem={(item) => {
+            console.log(item);
+            setValue("role", item.value);
           }}
         />
         <Button

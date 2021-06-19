@@ -12,6 +12,7 @@ const STORAGE_KEY = "@user";
 
 export const getAllTickets = async () => {
   let res = await axios.get(`${API_URL}all`);
+  console.log("from service", res);
   return res.data.tickets ? res.data.tickets : null;
 };
 

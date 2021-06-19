@@ -10,14 +10,14 @@ import {
 const API_URL = "https://happy-tenants-dev.herokuapp.com/api/auth/";
 const STORAGE_KEY = "@user";
 // Function to register User
-export const signup = async (username, email, password, building) => {
+export const signup = async (username, email, password, building, role) => {
   try {
     const res = await axios.post(API_URL + "signup", {
       username,
       email,
       password,
       building,
-      roles: ["tenant"],
+      roles: [role],
     });
     if (res.data.accessToken) {
       storeData(STORAGE_KEY, res.data);
@@ -32,10 +32,8 @@ export const signup = async (username, email, password, building) => {
 export const login = async (username, password) => {
   try {
     let response = await axios.post(API_URL + "signin", {
-      // username,
-      // password
-      username: "manager2",
-      password: "          ",
+      username,
+      password,
     });
 
     if (response.data.accessToken) {

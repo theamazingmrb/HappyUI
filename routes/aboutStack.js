@@ -1,12 +1,19 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { createAppContainer } from "react-navigation";
 import About from "../screens/about";
+import Test from "../screens/test";
 
 const screens = {
   About: {
     screen: About,
     navigationOptions: {
       title: "About",
+    },
+  },
+  Test: {
+    screen: Test,
+    navigationOptions: {
+      title: "Test",
     },
   },
 };

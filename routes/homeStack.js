@@ -6,7 +6,6 @@ import LandingScreen from "../screens/landingScreen";
 import NewTicket from "../screens/newTicket";
 import NewAlert from "../screens/newAlert";
 import EditTicket from "../screens/editTicket";
-
 const Stack = createStackNavigator();
 
 const HomeStack = () => {

@@ -14,7 +14,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { useForm } from "react-hook-form";
 import AppContext from "../components/AppContext";
 import { updateTicket } from "../services/ticket.service";
-import { Camera } from "expo-camera";
+// import { Camera } from "expo-camera";
 
 export default function EditTicket({
   route: {
@@ -38,7 +38,6 @@ export default function EditTicket({
     { name: "Please Select A Value", _id: null },
     ...globalState.buildings,
   ];
-  console.log(buildings);
   const [selectedBuilding, setSelectedBuilding] = useState(building);
   const { register, handleSubmit, setValue } = useForm();
   const [formData, setFormData] = useState({
@@ -65,8 +64,8 @@ export default function EditTicket({
     register("status", status);
     register("end", maintenanceWindow.end);
   }, [register]);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  const [hasPermission, setHasPermission] = useState(null);
+  // const [type, setType] = useState(Camera.Constants.Type.back);
+  // const [hasPermission, setHasPermission] = useState(null);
 
   useEffect(() => {
     console.log(
@@ -83,12 +82,12 @@ export default function EditTicket({
     );
   }, [formData]);
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
+  // useEffect(() => {
+  //   (async () => {
+  //     const { status } = await Camera.requestPermissionsAsync();
+  //     setHasPermission(status === "granted");
+  //   })();
+  // }, []);
 
   const onSubmit = (data) => {
     console.log("from submit", data);
@@ -111,12 +110,12 @@ export default function EditTicket({
           }, 3000);
     });
   };
-  if (hasPermission === null) {
-    return <View />;
-  }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
+  // if (hasPermission === null) {
+  //   return <View />;
+  // }
+  // if (hasPermission === false) {
+  //   return <Text>No access to camera</Text>;
+  // }
   return (
     <View style={styles.container}>
       <StatusBar style="light" />

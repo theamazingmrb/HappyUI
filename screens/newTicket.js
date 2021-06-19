@@ -14,7 +14,7 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import AppContext from "../components/AppContext";
 import { newTicket } from "../services/ticket.service";
-import { Camera } from "expo-camera";
+// import { Camera } from "expo-camera";
 
 export default function NewTicket({ navigation }) {
   const globalState = useContext(AppContext);
@@ -34,15 +34,9 @@ export default function NewTicket({ navigation }) {
     register("start");
     register("end");
   }, [register]);
-  const [type, setType] = useState(Camera.Constants.Type.back);
-  const [hasPermission, setHasPermission] = useState(null);
+  // const [type, setType] = useState(Camera.Constants.Type.back);
+  // const [hasPermission, setHasPermission] = useState(null);
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Camera.requestPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
   const onSubmit = (data) => {
     newTicket(
       data.building,
@@ -61,12 +55,12 @@ export default function NewTicket({ navigation }) {
       }
     });
   };
-  if (hasPermission === null) {
-    return <View />;
-  }
-  if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
+  // if (hasPermission === null) {
+  //   return <View />;
+  // }
+  // if (hasPermission === false) {
+  //   return <Text>No access to camera</Text>;
+  // }
   return (
     <View style={styles.container}>
       <StatusBar style="light" />

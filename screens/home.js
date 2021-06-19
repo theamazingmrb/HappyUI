@@ -31,23 +31,36 @@ export default function Home({ navigation, route }) {
   // used for getting building data
   useEffect(() => {
     getUser().then((user) => {
+      console.log("user", user);
       setCurrentUser(user);
-      if (user.roles.includes("ROLE_MANAGER")) {
-        setIsManager(true);
-
-        getAllTickets().then((tArray) => {
-          let data = tArray.map((ticket) => {
-            return {
-              ...ticket,
-              building:
-                globalState.buildings.find((b) => b._id == ticket.building)
-                  ?.name || "No name available",
-            };
-          });
-          setTickets(data);
-          console.log("tickets after setState", tickets);
+      setIsManager(true);
+      getAllTickets().then((tArray) => {
+        let data = tArray.map((ticket) => {
+          return {
+            ...ticket,
+            building:
+              globalState.buildings.find((b) => b._id == ticket.building)
+                ?.name || "No name available",
+          };
         });
-      }
+        if (user.roles.includes("ROLE_MANAGER")) {
+          console.log(data);
+          setTickets(data);
+        } else if (user.roles.includes("ROLE_MAINTENANCE")) {
+          setTickets(
+            data.filter((t) => {
+              return t.maintenance.includes(user.id);
+            })
+          );
+        } else {
+          setTickets(
+            data.filter((t) => {
+              return t.createdBy[0] == user.id;
+            })
+          );
+        }
+        console.log("tickets after setState", tickets);
+      });
     });
   }, [isFocused]);
 
